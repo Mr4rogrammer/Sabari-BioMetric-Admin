@@ -49,7 +49,7 @@ class Utils {
 
         fun getCurrentDate(): String {
             val calendar = Calendar.getInstance()
-            val dateFormat = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             return dateFormat.format(calendar.time)
         }
 

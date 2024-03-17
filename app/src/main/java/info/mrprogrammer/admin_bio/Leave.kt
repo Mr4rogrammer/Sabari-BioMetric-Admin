@@ -29,17 +29,22 @@ class Leave : AppCompatActivity() {
     }
 
     private fun getListOfUser() {
-        val db = FirebaseDatabase.getInstance().getReference("leave").child("krish@gmaicom")
+        val db = FirebaseDatabase.getInstance().getReference("leave")
         db.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 listOfData.clear()
-                snapshot.children.forEach {
-                   val data = it.getValue(LeaveDataMode::class.java)
-                    data?.key = it.key.toString()
-                    if (data != null) {
-                        listOfData.add(data)
+
+                snapshot.children.forEach {out->
+                    out.children.forEach {
+                        val data = it.getValue(LeaveDataMode::class.java)
+                        data?.outerKey =  out.key.toString()
+                        data?.key = it.key.toString()
+                        if (data != null) {
+                            listOfData.add(data)
+                        }
                     }
                 }
+
                 adapter.notifyDataSetChanged()
             }
 

@@ -2,6 +2,7 @@ package info.mrprogrammer.admin_bio.Model
 
 class LeaveDataMode {
     var key:String = ""
+    var outerKey:String = ""
     val enddate:String = ""
     val endtime:String = ""
     val fromdate:String = ""

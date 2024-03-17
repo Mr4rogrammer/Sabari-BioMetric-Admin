@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +15,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.FirebaseDatabase
 import com.mrprogrammer.mrshop.ObjectHolder.ObjectHolder
 import info.mrprogrammer.admin_bio.Model.LeaveDataMode
-import info.mrprogrammer.admin_bio.Model.UserDataModel
 import info.mrprogrammer.admin_bio.R
 import info.mrprogrammer.admin_bio.Utils.Companion.firebaseClearString
 
@@ -51,11 +49,11 @@ class LeaveListAdapter(private val context: Context, private val dataSet: List<L
             MaterialAlertDialogBuilder(context)
                 .setTitle("Update")
                 .setPositiveButton("Approval") { dialog, _ ->
-                    updateStatus(dataSet[position].key, true)
+                    updateStatus(dataSet[position], true)
                     dialog.dismiss()
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
-                    updateStatus(dataSet[position].key, false)
+                    updateStatus(dataSet[position], false)
                     dialog.dismiss()
                 }
                 .setNeutralButton("Add Remakr"){ dialog,_ ->
@@ -67,7 +65,7 @@ class LeaveListAdapter(private val context: Context, private val dataSet: List<L
 
                     builder.setPositiveButton("OK") { _, _ ->
                         val enteredText = input.text.toString()
-                        updateRemark(dataSet[position].key,enteredText)
+                        updateRemark(dataSet[position],enteredText)
                     }
 
                     builder.setNegativeButton("Cancel") { dialog, _ ->
@@ -79,18 +77,16 @@ class LeaveListAdapter(private val context: Context, private val dataSet: List<L
         }
     }
 
-    private fun updateStatus(email: String, b: Boolean) {
-        val db = FirebaseDatabase.getInstance().getReference("leave").child("krish@gmaicom")
-        val clearMail = email.firebaseClearString().toString()
-        db.child(clearMail).child("status").setValue(b).addOnCompleteListener {
+    private fun updateStatus(email: LeaveDataMode, b: Boolean) {
+        val db = FirebaseDatabase.getInstance().getReference("leave").child(email.outerKey).child(email.key)
+        db.child("status").setValue(b).addOnCompleteListener {
             ObjectHolder.MrToast().success(context as Activity,"Updated Successfully")
         }
     }
 
-    private fun updateRemark(email: String, b: String) {
-        val db = FirebaseDatabase.getInstance().getReference("leave").child("krish@gmaicom")
-        val clearMail = email.firebaseClearString().toString()
-        db.child(clearMail).child("adminremark").setValue(b).addOnCompleteListener {
+    private fun updateRemark(email: LeaveDataMode, b: String) {
+        val db = FirebaseDatabase.getInstance().getReference("leave").child(email.outerKey).child(email.key)
+        db.child("adminremark").setValue(b).addOnCompleteListener {
             ObjectHolder.MrToast().success(context as Activity,"Updated Successfully")
         }
     }

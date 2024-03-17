@@ -43,6 +43,7 @@ class Registration : Fragment() {
         val clearMail = mail?.firebaseClearString().toString()
         db.child(clearMail).child("name").setValue(name)
         db.child(clearMail).child("mail").setValue(mail)
+        db.child(clearMail).child("block").setValue("null")
         db.child(clearMail).child("roll").setValue(roll).addOnCompleteListener {
             ObjectHolder.MrToast().success(requireActivity(),"Saved Successfully")
             root.findViewById<TextInputEditText>(R.id.rollNumber).setText("")

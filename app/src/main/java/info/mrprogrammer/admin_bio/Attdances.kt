@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -13,7 +14,7 @@ import com.google.firebase.database.ValueEventListener
 import com.mrprogrammer.Utils.Widgets.ProgressButton
 import com.mrprogrammer.mrshop.ObjectHolder.ObjectHolder
 import info.mrprogrammer.admin_bio.Model.AttdanceModel
-import info.mrprogrammer.admin_bio.Utils.Companion.getCurrentTime
+import info.mrprogrammer.admin_bio.Utils.Companion.getCurrentDate
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -59,6 +60,20 @@ class Attdances : AppCompatActivity() {
     }
 
     private fun initSpAttdances() {
+        val start = findViewById<TextView>(R.id.start_date1)
+        val end = findViewById<TextView>(R.id.end_date1)
+        start.text = getCurrentDate()
+        end.text = getCurrentDate()
+
+
+        start.setOnClickListener {
+            dateCicker(start)
+        }
+
+        end.setOnClickListener {
+            dateCicker(end)
+        }
+
         val timeStart = findViewById<TextView>(R.id.sp_start_time)
         val timeEnd = findViewById<TextView>(R.id.sp_end_time)
         val radius = findViewById<TextView>(R.id.sp_radius)
@@ -92,17 +107,29 @@ class Attdances : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            saveToSpDatabase(radius.text.toString(), remark.text.toString(), timeEnd.text.toString(), timeStart.text.toString(), username.text.toString(), password.text.toString())
+            saveToSpDatabase(radius.text.toString(), remark.text.toString(), timeEnd.text.toString(),
+                timeStart.text.toString(), username.text.toString(), password.text.toString(), start.text.toString(), end.text.toString())
         }
 
     }
 
 
-    private fun saveToSpDatabase(radius: String, remark: String, timeEnd: String, timeStart: String, userName:String, password:String) {
+    private fun saveToSpDatabase(
+        radius: String,
+        remark: String,
+        timeEnd: String,
+        timeStart: String,
+        userName: String,
+        password: String,
+        start: String,
+        end: String
+    ) {
         val db = FirebaseDatabase.getInstance().getReference("attdances").child("spdata")
         db.child("radius").setValue(radius)
         db.child("remark").setValue(remark)
         db.child("timeStart").setValue(timeStart)
+        db.child("startDate").setValue(start)
+        db.child("endDate").setValue(end)
         db.child("username").setValue(userName)
         db.child("password").setValue(password)
         db.child("timeEnd").setValue(timeEnd).addOnCompleteListener {
@@ -142,7 +169,36 @@ class Attdances : AppCompatActivity() {
         })
     }
 
+    private fun dateCicker(textView: TextView) {
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Select a Date")
+            .build()
+
+        datePicker.addOnPositiveButtonClickListener {
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = it
+            val selectedDate = SimpleDateFormat("dd/MM/yyyy", Locale.US).format(calendar.time)
+            textView.text = selectedDate
+        }
+        datePicker.show(this.supportFragmentManager,"j")
+    }
+
     private fun initAttdances() {
+        val start = findViewById<TextView>(R.id.start_date)
+        val end = findViewById<TextView>(R.id.end_date)
+        start.text = getCurrentDate()
+        end.text = getCurrentDate()
+
+
+        start.setOnClickListener {
+            dateCicker(start)
+        }
+
+        end.setOnClickListener {
+            dateCicker(end)
+        }
+
+
         val timeStart = findViewById<TextView>(R.id.start_time)
         val timeEnd = findViewById<TextView>(R.id.end_time)
         val radius = findViewById<TextView>(R.id.radius)
@@ -171,16 +227,25 @@ class Attdances : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            saveToDatabase(radius.text.toString(), remark.text.toString(), timeEnd.text.toString(), timeStart.text.toString())
+            saveToDatabase(radius.text.toString(), remark.text.toString(), timeEnd.text.toString(), timeStart.text.toString(), start.text.toString(), end.text.toString())
         }
 
     }
 
-    private fun saveToDatabase(radius: String, remark: String, timeEnd: String, timeStart: String) {
+    private fun saveToDatabase(
+        radius: String,
+        remark: String,
+        timeEnd: String,
+        timeStart: String,
+        start: String,
+        end: String
+    ) {
         val db = FirebaseDatabase.getInstance().getReference("attdances").child("data")
         db.child("radius").setValue(radius)
         db.child("remark").setValue(remark)
         db.child("timeStart").setValue(timeStart)
+        db.child("startDate").setValue(start)
+        db.child("endDate").setValue(end)
         db.child("timeEnd").setValue(timeEnd).addOnCompleteListener {
             ObjectHolder.MrToast().success(this,"Update Completed")
         }
